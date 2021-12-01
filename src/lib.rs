@@ -1,4 +1,4 @@
-use std::{env::args_os, fs::File, io::{self, Error, Read}, path::PathBuf};
+use std::{env::args_os, fs::File, io::{self, Error, Read, ErrorKind}, path::PathBuf, str::FromStr};
 
 pub mod solution;
 
@@ -15,4 +15,16 @@ pub fn get_input_contents(mut file: File) -> io::Result<String> {
     let mut input = String::new();
     file.read_to_string(&mut input)
         .map(|_| input)
+}
+
+pub fn get_lines<T>(contents: String) -> io::Result<Vec<T>>
+where
+    T: FromStr,
+    <T as FromStr>::Err: std::error::Error,
+{
+    contents
+        .lines()
+        .map(|line| line.trim().parse())
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|err: <T as FromStr>::Err| Error::new(ErrorKind::InvalidData, err.to_string()))
 }
