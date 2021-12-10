@@ -1,4 +1,4 @@
-use std::{env::args_os, fs::File, io::{self, Error, Read, ErrorKind}, path::PathBuf, str::FromStr};
+use std::{env::args_os, fs::File, io::{self, Error, Read, ErrorKind}, path::PathBuf, str::FromStr, fmt::Display};
 
 pub mod solution;
 
@@ -20,7 +20,7 @@ pub fn get_input_contents(mut file: File) -> io::Result<String> {
 pub fn get_lines<T>(contents: String) -> io::Result<Vec<T>>
 where
     T: FromStr,
-    <T as FromStr>::Err: std::error::Error,
+    <T as FromStr>::Err: Display
 {
     contents
         .lines()
