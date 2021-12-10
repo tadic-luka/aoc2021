@@ -14,7 +14,13 @@ struct Position {
     horizontal: NumType,
     depth: NumType,
 }
-impl Position  {
+
+struct AimPos {
+    pos: Position,
+    aim: NumType,
+}
+
+impl Position {
     fn new() -> Self {
         Self {
             horizontal: 0,
@@ -35,6 +41,42 @@ impl Position  {
             Command::Up(num) => Self {
                 depth: self.depth - num,
                 ..self
+            },
+        }
+    }
+}
+
+
+impl AimPos {
+    fn new() -> Self {
+        AimPos {
+            pos: Position::new(),
+            aim: 0,
+        }
+    }
+
+    fn apply(self, command: Command) -> Self {
+        match command {
+            Command::Forward(num) => {
+                Self {
+                    pos: Position {
+                        horizontal: self.pos.horizontal + num,
+                        depth: self.pos.depth + self.aim * num,
+                    },
+                    ..self
+                }
+            },
+            Command::Down(num) => {
+                Self {
+                    aim: self.aim + num,
+                    ..self
+                }
+            },
+            Command::Up(num) => {
+                Self {
+                    aim: self.aim - num,
+                    ..self
+                }
             },
         }
     }
@@ -67,6 +109,14 @@ pub fn solve_puzzle_one(input: &[Command]) -> NumType {
     pos.horizontal * pos.depth
 }
 
+pub fn solve_puzzle_two(input: &[Command]) -> NumType {
+    let aim = input
+        .into_iter()
+        .fold(AimPos::new(), |pos, &input| pos.apply(input));
+
+    aim.pos.horizontal * aim.pos.depth
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -83,5 +133,19 @@ mod tests {
         ];
 
         assert_eq!(solve_puzzle_one(&input), 150);
+    }
+
+    #[test]
+    fn part_2_test() {
+        let input = [
+            Command::Forward(5),
+            Command::Down(5),
+            Command::Forward(8),
+            Command::Up(3),
+            Command::Down(8),
+            Command::Forward(2),
+        ];
+
+        assert_eq!(solve_puzzle_two(&input), 900);
     }
 }
