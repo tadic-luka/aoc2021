@@ -50,5 +50,6 @@ mod tests {
     fn part_1_test() {
         let mut input = [3, 4, 3, 1, 2];
         assert_eq!(solve_puzzle_one(&input, 80), 5934);
+        assert_eq!(solve_puzzle_one(&input, 256), 26984457539);
     }
 }
